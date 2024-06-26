@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASD Classification Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .result {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .result img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ASD Classification Results</h1>
+        <h2>Detected Faces</h2>
+        {% for result in results %}
+        <div class="result">
+            <img src="/uploads/{{ image_file }}" alt="Detected Face">
+            <p class="label">Label: {{ result.label }}</p>
+            <p>Coordinates: x: {{ result.box[0] }}, y: {{ result.box[1] }}, width: {{ result.box[2] }}, height: {{ result.box[3] }}</p>
+            <img src="{{ url_for('uploaded_file', filename='detected_face_' + loop.index0|string + '.jpg') }}" alt="Detected Face">
+        </div>
+        {% endfor %}
+        <a href="/">Classify Another Image</a>
+    </div>
+</body>
+</html>

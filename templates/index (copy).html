@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection and Classification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #066e54;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #151c24;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .custom-file-upload {
+            border: 2px solid #007bff;
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #149149;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        .custom-file-upload:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        li {
+            background: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Face Detection and Classification</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <label for="image" class="custom-file-upload">Choose Image</label>
+            <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
+            <button type="submit">Upload and Predict</button>
+        </form>
+        <div id="image-preview"></div>
+        <div id="results"></div>
+    </div>
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imgElement = document.createElement('img');
+                imgElement.src = reader.result;
+                imgElement.style.maxWidth = '100%';
+                imgElement.style.height = 'auto';
+                imgElement.style.marginTop = '20px';
+                imgElement.style.borderRadius = '4px';
+                document.getElementById('image-preview').innerHTML = '';
+                document.getElementById('image-preview').appendChild(imgElement);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                if (data.error) {
+                    resultsDiv.textContent = data.error;
+                } else {
+                    const img = document.createElement('img');
+                    img.src = `/uploads/${data.image_file}`;
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.marginTop = '20px';
+                    img.style.borderRadius = '4px';
+                    resultsDiv.appendChild(img);
+                    const ul = document.createElement('ul');
+                    data.results.forEach(result => {
+                        const li = document.createElement('li');
+                        li.textContent = `Label: ${result.label}, Box: [${result.box.join(', ')}]`;
+                        li.style.background = '#f1f1f1';
+                        li.style.padding = '10px';
+                        li.style.marginBottom = '10px';
+                        li.style.borderRadius = '4px';
+                        ul.appendChild(li);
+                    });
+                    resultsDiv.appendChild(ul);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
