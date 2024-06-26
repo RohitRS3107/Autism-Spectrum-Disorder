@@ -37,8 +37,8 @@ HTML, CSS, JavaScript
 Clone the repository:
 
 
-    git clone https://github.com/your-username/asd-prediction.git
-    cd asd-prediction
+    git clone https://github.com/rohitrs3107/autism-spectrum-disorder.git
+    cd autism-spectrum-disorder
 
 Install dependencies:
 
@@ -52,25 +52,21 @@ Prepare Dataset: Execute prepareData.py to gather and organize the dataset.
 
     
 
-    python prepareData.py
-
-Data Preprocessing: Use data_preprocessing.py to preprocess the dataset.
+    python load_dataset.py
 
 
-
-    python data_preprocessing.py
 
 Train VGG Model: Train the VGG model using vgg_model.py.
 
 
 
-    python vgg_model.py
+    python train.py
 
 Run Flask Application: Start the Flask web application for ASD prediction.
 
 
 
-    python app3.py
+    python app\ \(copy\).py
 
 Access the application at http://localhost:5000.
 
